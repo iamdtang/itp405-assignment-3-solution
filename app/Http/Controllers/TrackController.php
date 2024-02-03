@@ -30,4 +30,38 @@ class TrackController extends Controller
             'tracks' => $tracks,
         ]);
     }
+
+    public function create()
+    {
+        return view('track.create', [
+            'albums' => DB::table('albums')->orderBy('Title')->get(),
+            'mediaTypes' => DB::table('media_types')->orderBy('Name')->get(),
+            'genres' => DB::table('genres')->orderBy('Name')->get(),
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'album' => 'required|exists:albums,AlbumId',
+            'genre' => 'required|exists:genres,GenreId',
+            'mediaType' => 'required|exists:media_types,MediaTypeId',
+            'price' => 'required|gt:0|decimal:2',
+            'milliseconds' => 'required',
+        ]);
+
+        DB::table('tracks')->insert([
+            'Name' => $request->input('name'),
+            'AlbumId' => $request->input('album'),
+            'GenreId' => $request->input('genre'),
+            'MediaTypeId' => $request->input('mediaType'),
+            'UnitPrice' => $request->input('price'),
+            'Milliseconds' => $request->input('milliseconds'),
+        ]);
+
+        return redirect()
+            ->route('track.index')
+            ->with('success', "The track {$request->input('name')} was successfully created");
+    }
 }

@@ -18,4 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/tracks', [TrackController::class, 'index']);
+Route::get('/tracks', [TrackController::class, 'index'])->name('track.index');
+Route::get('/tracks/new', [TrackController::class, 'create'])->name('track.create');
+Route::post('/tracks', [TrackController::class, 'store'])->name('track.store');
